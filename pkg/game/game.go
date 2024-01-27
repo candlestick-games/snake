@@ -9,6 +9,7 @@ import (
 	"github.com/candlestick-games/snake/pkg/std/collection"
 	"github.com/candlestick-games/snake/pkg/std/debugger"
 	"github.com/candlestick-games/snake/pkg/std/pencil"
+	"github.com/candlestick-games/snake/pkg/std/rand"
 	"github.com/candlestick-games/snake/pkg/std/space"
 )
 
@@ -27,6 +28,8 @@ type Game struct {
 	canMove  bool
 	gameOver bool
 	ticks    uint
+
+	walls [cellRows][cellCols]bool
 
 	food collection.Set[space.Vec2I]
 
@@ -49,6 +52,8 @@ func (g *Game) Init() error {
 }
 
 func (g *Game) resetSnake() {
+	g.placeWalls()
+
 	g.snake = []space.Vec2I{
 		{X: 3, Y: 1},
 		{X: 2, Y: 1},
@@ -60,6 +65,37 @@ func (g *Game) resetSnake() {
 	g.placeFood()
 
 	g.gameOver = false
+}
+
+func (g *Game) placeWalls() {
+	for y := 0; y < cellRows; y++ {
+		for x := 0; x < cellCols; x++ {
+			g.walls[y][x] = false
+		}
+	}
+
+	n := rand.Int((cellCols*cellRows)/20+1, (cellCols*cellRows)/10+1)
+	for i := 0; i < n; i++ {
+		w := space.NewVec2I(-1)
+		for w.X < 0 || g.walls[w.Y][w.X] {
+			w = space.RandomVec2I(0, cellCols-1, 0, cellRows-1)
+		}
+
+		g.walls[w.Y][w.X] = true
+		m := rand.Int(0, 8)
+		for j := 0; j < m; j++ {
+			rw := g.randomWallNeighbour(w)
+			g.walls[rw.Y][rw.X] = true
+		}
+	}
+}
+
+func (g *Game) randomWallNeighbour(w space.Vec2I) space.Vec2I {
+	nw := space.NewVec2I(-1)
+	for nw.X < 0 || nw == w {
+		nw = space.RandomVec2I(max(w.X-1, 0), min(w.X+1, cellCols-1), max(w.Y-1, 0), min(w.Y+1, cellRows-1))
+	}
+	return nw
 }
 
 func (g *Game) placeFood() {
@@ -104,6 +140,13 @@ func (g *Game) Update() error {
 	// Game ticks
 	g.ticks++
 
+	if g.gameOver {
+		if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
+			g.resetSnake()
+		}
+		return nil
+	}
+
 	// Snake controls & movement
 	g.HandleControls()
 	g.MoveSnake()
@@ -116,6 +159,7 @@ func (g *Game) HandleControls() {
 		return
 	}
 
+	// TODO: Allow changing directions & add direction indicator
 	switch {
 	case inpututil.IsKeyJustPressed(ebiten.KeyUp) && g.dir.Y == 0:
 		g.dir = space.Vec2I{X: 0, Y: -1}
@@ -133,7 +177,7 @@ func (g *Game) HandleControls() {
 }
 
 func (g *Game) MoveSnake() {
-	if g.gameOver || g.ticks%20 != 0 {
+	if g.ticks%20 != 0 {
 		return
 	}
 
@@ -185,6 +229,22 @@ func (g *Game) Draw(screen *ebiten.Image) {
 				}.Add(cellOffset),
 				cellSize,
 				colornames.Aliceblue,
+			)
+		}
+	}
+
+	for y := 0; y < cellRows; y++ {
+		for x := 0; x < cellCols; x++ {
+			if !g.walls[y][x] {
+				continue
+			}
+
+			pos := space.NewVec2I(x, y)
+			pencil.FillRectV(
+				screen,
+				pos.ToF().Mul(cellSize.Add(pad)).Add(cellOffset),
+				cellSize,
+				colornames.Black,
 			)
 		}
 	}
