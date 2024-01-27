@@ -81,7 +81,6 @@ func Draw(screen *ebiten.Image) {
 	}
 
 	screenSize := screen.Bounds().Max
-	screenHeight := float64(screenSize.Y)
 
 	debugText := strings.Builder{}
 	debugText.WriteString(fmt.Sprintf("FPS: %.2f\nTPS: %.2f", ebiten.ActualFPS(), ebiten.ActualTPS()))
@@ -91,10 +90,18 @@ func Draw(screen *ebiten.Image) {
 		debugText.WriteString(fmt.Sprintf("\nDevice scale: %.2f", ebiten.DeviceScaleFactor()))
 	}
 
-	pencil.TextBottomLeft(
+	const dx = 1
+	pencil.TextTopLeft(
 		screen, debugFontFace,
 		debugText.String(),
-		8, screenHeight-8,
+		8+dx, 8+dx,
+		colornames.Gray,
+	)
+
+	pencil.TextTopLeft(
+		screen, debugFontFace,
+		debugText.String(),
+		8, 8,
 		colornames.White,
 	)
 
