@@ -76,7 +76,7 @@ func (g *Game) placeFood() {
 			continue
 		}
 
-		if g.walls[pos.Y][pos.Y] {
+		if g.walls[pos.Y][pos.X] {
 			continue
 		}
 

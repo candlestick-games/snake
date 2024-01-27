@@ -76,17 +76,19 @@ func (g *Game) moveSnake() {
 		return
 	}
 
+	for i := 0; i < len(g.snake)-1; i++ {
+		if g.snake[i] != newHead {
+			continue
+		}
+
+		g.gameOver = true
+		log.Debug("self collision", "head", newHead)
+		return
+	}
+
 	tail := g.snake[len(g.snake)-1]
 	copy(g.snake[1:], g.snake[:len(g.snake)-1])
 	g.snake[0] = newHead
-
-	for i, s := range g.snake {
-		if i != 0 && s == newHead {
-			g.gameOver = true
-			log.Debug("self collision", "head", newHead)
-			return
-		}
-	}
 
 	for foodPos := range g.food {
 		if newHead == foodPos {
