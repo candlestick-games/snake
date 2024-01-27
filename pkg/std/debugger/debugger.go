@@ -95,9 +95,8 @@ func Draw(screen *ebiten.Image) {
 		screen, debugFontFace,
 		debugText.String(),
 		8+dx, 8+dx,
-		colornames.Gray,
+		colornames.Black,
 	)
-
 	pencil.TextTopLeft(
 		screen, debugFontFace,
 		debugText.String(),
@@ -126,6 +125,12 @@ func Draw(screen *ebiten.Image) {
 			colornames.White,
 		)
 
+		pencil.TextTopLeft(
+			screen, debugFontFace,
+			fmt.Sprintf("%d %d", cursorX, cursorY),
+			x+8+dx, y+16+dx,
+			colornames.Black,
+		)
 		pencil.TextTopLeft(
 			screen, debugFontFace,
 			fmt.Sprintf("%d %d", cursorX, cursorY),

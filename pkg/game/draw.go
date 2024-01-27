@@ -14,6 +14,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	board := screen.SubImage(g.boardBounds.ToIR()).(*ebiten.Image)
 	board.Clear()
 
+	// Cells
 	pad := space.NewVec2F(4)
 	cellSize := space.NewVec2F(g.cellSize).Sub(pad)
 	cellOffset := g.boardBounds.Pos.Add(g.boardOffset).Add(pad.Scale(0.5))
@@ -31,6 +32,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		}
 	}
 
+	// Walls
 	for y := 0; y < cellRows; y++ {
 		for x := 0; x < cellCols; x++ {
 			if !g.walls[y][x] {
@@ -47,15 +49,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		}
 	}
 
-	for _, pos := range g.snake {
-		pencil.FillRectV(
-			screen,
-			pos.ToF().Mul(cellSize.Add(pad)).Add(cellOffset),
-			cellSize,
-			colornames.Green,
-		)
-	}
-
+	// Food
 	for pos := range g.food {
 		pencil.FillRectV(
 			screen,
@@ -65,6 +59,17 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		)
 	}
 
+	// Snake
+	for _, pos := range g.snake {
+		pencil.FillRectV(
+			screen,
+			pos.ToF().Mul(cellSize.Add(pad)).Add(cellOffset),
+			cellSize,
+			colornames.Green,
+		)
+	}
+
+	// Move direction
 	moveTo := g.snake[0].ToF().Add(g.dir.ToF().Scale(0.5))
 	pencil.FillRectV(
 		screen,

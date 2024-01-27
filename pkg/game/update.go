@@ -1,6 +1,7 @@
 package game
 
 import (
+	"github.com/charmbracelet/log"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 
@@ -65,6 +66,13 @@ func (g *Game) moveSnake() {
 
 	if newHead.X < 0 || newHead.X >= cellCols || newHead.Y < 0 || newHead.Y >= cellRows {
 		g.gameOver = true
+		log.Debug("bounds collision", "head", newHead)
+		return
+	}
+
+	if g.walls[newHead.Y][newHead.X] {
+		g.gameOver = true
+		log.Debug("wall collision", "head", newHead)
 		return
 	}
 
@@ -75,6 +83,7 @@ func (g *Game) moveSnake() {
 	for i, s := range g.snake {
 		if i != 0 && s == newHead {
 			g.gameOver = true
+			log.Debug("self collision", "head", newHead)
 			return
 		}
 	}

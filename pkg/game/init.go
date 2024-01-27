@@ -72,10 +72,15 @@ func (g *Game) placeFood() {
 	for {
 		pos := space.RandomVec2I(1, cellCols-1, 1, cellRows-1)
 
-		ok := g.food.Has(pos)
-		if ok {
+		if g.food.Has(pos) {
 			continue
 		}
+
+		if g.walls[pos.Y][pos.Y] {
+			continue
+		}
+
+		var ok bool
 		for _, snake := range g.snake {
 			if snake == pos {
 				ok = true
