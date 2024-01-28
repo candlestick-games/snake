@@ -22,15 +22,20 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	cellOffset := g.boardBounds.Pos.Add(g.boardOffset)
 	for y := 0; y < cellRows; y++ {
 		for x := 0; x < cellCols; x++ {
-			pencil.FillRectV(
-				screen,
-				space.Vec2F{
-					X: float64(x) * g.cellSize,
-					Y: float64(y) * g.cellSize,
-				}.Add(cellOffset),
-				cellSize,
-				colornames.Aliceblue,
-			)
+			if g.walls[y][x] {
+				continue
+			}
+
+			img := assets.Image(assets.Floor)
+
+			op := &ebiten.DrawImageOptions{}
+			imgCellSize := space.NewVec2F(g.cellSize)
+			op.GeoM = space.ImgResizeTo(op.GeoM, img, imgCellSize)
+
+			pos := space.NewVec2I(x, y)
+			op.GeoM = space.Translate(op.GeoM, pos.ToF().Mul(imgCellSize).Add(cellOffset))
+
+			screen.DrawImage(img, op)
 		}
 	}
 
@@ -41,21 +46,24 @@ func (g *Game) Draw(screen *ebiten.Image) {
 				continue
 			}
 
+			img := assets.Image(assets.Wall)
+
+			op := &ebiten.DrawImageOptions{}
+			imgCellSize := space.NewVec2F(g.cellSize)
+			op.GeoM = space.ImgResizeTo(op.GeoM, img, imgCellSize)
+
 			pos := space.NewVec2I(x, y)
-			pencil.FillRectV(
-				screen,
-				pos.ToF().Mul(cellSize).Add(cellOffset),
-				cellSize,
-				colornames.Black,
-			)
+			op.GeoM = space.Translate(op.GeoM, pos.ToF().Mul(imgCellSize).Add(cellOffset))
+
+			screen.DrawImage(img, op)
 		}
 	}
 
 	// Food
 	for pos := range g.food {
-		op := &ebiten.DrawImageOptions{}
-
 		img := assets.Image(assets.Apple)
+
+		op := &ebiten.DrawImageOptions{}
 		imgCellSize := space.NewVec2F(g.cellSize)
 		op.GeoM = space.ImgResizeTo(op.GeoM, img, imgCellSize)
 		op.GeoM = space.Translate(op.GeoM, pos.ToF().Mul(imgCellSize).Add(cellOffset))

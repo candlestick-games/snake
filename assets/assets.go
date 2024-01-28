@@ -23,6 +23,9 @@ const (
 	SnakeTail     ID = "img/snake-tail.png"
 
 	Apple ID = "img/apple.png"
+
+	Floor ID = "img/floor.png"
+	Wall  ID = "img/wall.png"
 )
 
 func Image(id ID) *ebiten.Image {
