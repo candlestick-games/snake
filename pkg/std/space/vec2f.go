@@ -61,3 +61,17 @@ func (v Vec2F) Scale(s float64) Vec2F {
 		Y: v.Y * s,
 	}
 }
+
+func (v Vec2F) ScaleX(s float64) Vec2F {
+	return Vec2F{
+		X: v.X * s,
+		Y: v.Y,
+	}
+}
+
+func (v Vec2F) ScaleY(s float64) Vec2F {
+	return Vec2F{
+		X: v.X,
+		Y: v.Y * s,
+	}
+}

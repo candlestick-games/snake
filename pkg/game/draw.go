@@ -8,7 +8,6 @@ import (
 
 	"github.com/candlestick-games/snake/assets"
 	"github.com/candlestick-games/snake/pkg/std/debugger"
-	"github.com/candlestick-games/snake/pkg/std/pencil"
 	"github.com/candlestick-games/snake/pkg/std/space"
 )
 
@@ -29,11 +28,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			img := assets.Image(assets.Floor)
 
 			op := &ebiten.DrawImageOptions{}
-			imgCellSize := space.NewVec2F(g.cellSize)
-			op.GeoM = space.ImgResizeTo(op.GeoM, img, imgCellSize)
+			op.GeoM = space.ImgResizeTo(op.GeoM, img, cellSize)
 
 			pos := space.NewVec2I(x, y)
-			op.GeoM = space.Translate(op.GeoM, pos.ToF().Mul(imgCellSize).Add(cellOffset))
+			op.GeoM = space.Translate(op.GeoM, pos.ToF().Mul(cellSize).Add(cellOffset))
 
 			screen.DrawImage(img, op)
 		}
@@ -49,11 +47,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			img := assets.Image(assets.Wall)
 
 			op := &ebiten.DrawImageOptions{}
-			imgCellSize := space.NewVec2F(g.cellSize)
-			op.GeoM = space.ImgResizeTo(op.GeoM, img, imgCellSize)
+			op.GeoM = space.ImgResizeTo(op.GeoM, img, cellSize)
 
 			pos := space.NewVec2I(x, y)
-			op.GeoM = space.Translate(op.GeoM, pos.ToF().Mul(imgCellSize).Add(cellOffset))
+			op.GeoM = space.Translate(op.GeoM, pos.ToF().Mul(cellSize).Add(cellOffset))
 
 			screen.DrawImage(img, op)
 		}
@@ -64,9 +61,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		img := assets.Image(assets.Apple)
 
 		op := &ebiten.DrawImageOptions{}
-		imgCellSize := space.NewVec2F(g.cellSize)
-		op.GeoM = space.ImgResizeTo(op.GeoM, img, imgCellSize)
-		op.GeoM = space.Translate(op.GeoM, pos.ToF().Mul(imgCellSize).Add(cellOffset))
+		op.GeoM = space.ImgResizeTo(op.GeoM, img, cellSize)
+		op.GeoM = space.Translate(op.GeoM, pos.ToF().Mul(cellSize).Add(cellOffset))
 
 		screen.DrawImage(img, op)
 	}
@@ -171,21 +167,22 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		op.GeoM = space.Rotate(op.GeoM, imgCenter, angle)
 		op.GeoM = space.Flip(op.GeoM, imgCenter, horizontalFlip, verticalFlip)
 
-		imgCellSize := space.NewVec2F(g.cellSize)
-		op.GeoM = space.ImgResizeTo(op.GeoM, img, imgCellSize)
-		op.GeoM = space.Translate(op.GeoM, pos.ToF().Mul(imgCellSize).Add(cellOffset))
+		op.GeoM = space.ImgResizeTo(op.GeoM, img, cellSize)
+		op.GeoM = space.Translate(op.GeoM, pos.ToF().Mul(cellSize).Add(cellOffset))
 
 		screen.DrawImage(img, op)
 	}
 
 	// Move direction
-	moveTo := g.snake[0].ToF().Add(g.dir.ToF().Scale(0.5))
-	pencil.FillRectV(
-		screen,
-		moveTo.Mul(cellSize).Add(cellOffset).Add(cellSize.Scale(0.25)),
-		cellSize.Scale(0.5),
-		colornames.Orange,
-	)
+	// moveTo := g.snake[0].ToF().Add(g.dir.ToF())
+	// pad := cellSize.Scale(0.6)
+	// pencil.StrokeRectV(
+	// 	screen,
+	// 	moveTo.Mul(cellSize).Add(cellOffset).Add(pad.Scale(0.5)),
+	// 	cellSize.Sub(pad),
+	// 	2,
+	// 	colornames.Aliceblue,
+	// )
 
 	debugger.Draw(screen)
 }

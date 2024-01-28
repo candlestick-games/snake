@@ -63,7 +63,11 @@ func StrokeRect(dst *ebiten.Image, x, y, width, height, thickness float64, clr c
 	)
 }
 
-func StrokeRectV(dst *ebiten.Image, rect space.RectF, thickness float64, clr color.Color) {
+func StrokeRectV(dst *ebiten.Image, pos space.Vec2F, size space.Vec2F, thickness float64, clr color.Color) {
+	StrokeRect(dst, pos.X, pos.Y, size.X, size.Y, thickness, clr)
+}
+
+func StrokeRectR(dst *ebiten.Image, rect space.RectF, thickness float64, clr color.Color) {
 	StrokeRect(dst, rect.Pos.X, rect.Pos.Y, rect.Size.X, rect.Size.Y, thickness, clr)
 }
 
