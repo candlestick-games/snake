@@ -5,6 +5,8 @@ import (
 	"io/fs"
 
 	"github.com/charmbracelet/log"
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/opentype"
 )
@@ -24,6 +26,14 @@ func LoadData(fs fs.FS, filename string) []byte {
 		log.Fatal("Read data", "filename", filename, "error", err)
 	}
 	return data
+}
+
+func LoadImage(fs fs.FS, filename string) *ebiten.Image {
+	img, _, err := ebitenutil.NewImageFromFileSystem(fs, filename)
+	if err != nil {
+		log.Fatal("Load image", "filename", filename, "error", err)
+	}
+	return img
 }
 
 func LoadFont(fs fs.FS, filename string) *opentype.Font {

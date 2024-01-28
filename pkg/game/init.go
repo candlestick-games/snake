@@ -30,6 +30,7 @@ func (g *Game) resetSnake() {
 		{X: 1, Y: 1},
 	}
 	g.dir = space.Vec2I{X: 1, Y: 0}
+	g.prevDir = g.dir
 
 	g.food = collection.NewSet[space.Vec2I]()
 	g.placeFood()
