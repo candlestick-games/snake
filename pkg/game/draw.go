@@ -54,12 +54,14 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 	// Food
 	for pos := range g.food {
-		pencil.FillRectV(
-			screen,
-			pos.ToF().Mul(cellSize.Add(pad)).Add(cellOffset),
-			cellSize,
-			colornames.Red,
-		)
+		op := &ebiten.DrawImageOptions{}
+
+		img := assets.Image(assets.Apple)
+		imgCellSize := space.NewVec2F(g.cellSize)
+		op.GeoM = space.ImgResizeTo(op.GeoM, img, imgCellSize)
+		op.GeoM = space.Translate(op.GeoM, pos.ToF().Mul(imgCellSize).Add(cellOffset))
+
+		screen.DrawImage(img, op)
 	}
 
 	// Snake

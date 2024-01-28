@@ -21,6 +21,8 @@ const (
 	SnakeBody     ID = "img/snake-body.png"
 	SnakeBodyTurn ID = "img/snake-body-turn.png"
 	SnakeTail     ID = "img/snake-tail.png"
+
+	Apple ID = "img/apple.png"
 )
 
 func Image(id ID) *ebiten.Image {
