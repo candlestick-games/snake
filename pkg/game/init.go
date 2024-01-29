@@ -22,6 +22,9 @@ func (g *Game) Init() error {
 }
 
 func (g *Game) resetSnake() {
+	g.gridCols = 16 * 2
+	g.gridRows = 9 * 2
+
 	g.placeWalls()
 
 	g.snake = []space.Vec2I{
@@ -39,17 +42,16 @@ func (g *Game) resetSnake() {
 }
 
 func (g *Game) placeWalls() {
-	for y := 0; y < cellRows; y++ {
-		for x := 0; x < cellCols; x++ {
-			g.walls[y][x] = false
-		}
+	g.walls = make([][]bool, g.gridRows)
+	for y := 0; y < g.gridRows; y++ {
+		g.walls[y] = make([]bool, g.gridCols)
 	}
 
-	n := rand.Int((cellCols*cellRows)/20+1, (cellCols*cellRows)/10+1)
+	n := rand.Int((g.gridCols*g.gridRows)/20+1, (g.gridCols*g.gridRows)/10+1)
 	for i := 0; i < n; i++ {
 		w := space.NewVec2I(-1)
 		for w.X < 0 || g.walls[w.Y][w.X] {
-			w = space.RandomVec2I(0, cellCols-1, 0, cellRows-1)
+			w = space.RandomVec2I(0, g.gridCols-1, 0, g.gridRows-1)
 		}
 
 		g.walls[w.Y][w.X] = true
@@ -64,14 +66,14 @@ func (g *Game) placeWalls() {
 func (g *Game) randomWallNeighbour(w space.Vec2I) space.Vec2I {
 	nw := space.NewVec2I(-1)
 	for nw.X < 0 || nw == w {
-		nw = space.RandomVec2I(max(w.X-1, 0), min(w.X+1, cellCols-1), max(w.Y-1, 0), min(w.Y+1, cellRows-1))
+		nw = space.RandomVec2I(max(w.X-1, 0), min(w.X+1, g.gridCols-1), max(w.Y-1, 0), min(w.Y+1, g.gridRows-1))
 	}
 	return nw
 }
 
 func (g *Game) placeFood() {
 	for {
-		pos := space.RandomVec2I(1, cellCols-1, 1, cellRows-1)
+		pos := space.RandomVec2I(1, g.gridCols-1, 1, g.gridRows-1)
 
 		if g.food.Has(pos) {
 			continue

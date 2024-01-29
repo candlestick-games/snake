@@ -20,8 +20,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	// Cells
 	cellSize := space.NewVec2F(g.cellSize)
 	cellOffset := g.boardBounds.Pos.Add(g.boardOffset)
-	for y := 0; y < cellRows; y++ {
-		for x := 0; x < cellCols; x++ {
+	for y := 0; y < g.gridRows; y++ {
+		for x := 0; x < g.gridCols; x++ {
 			if g.walls[y][x] {
 				continue
 			}
@@ -39,8 +39,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 
 	// Walls
-	for y := 0; y < cellRows; y++ {
-		for x := 0; x < cellCols; x++ {
+	for y := 0; y < g.gridRows; y++ {
+		for x := 0; x < g.gridCols; x++ {
 			if !g.walls[y][x] {
 				continue
 			}

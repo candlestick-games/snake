@@ -63,7 +63,7 @@ func (g *Game) moveSnake() {
 	head := g.snake[0]
 	newHead := head.Add(g.dir)
 
-	if newHead.X < 0 || newHead.X >= cellCols || newHead.Y < 0 || newHead.Y >= cellRows {
+	if newHead.X < 0 || newHead.X >= g.gridCols || newHead.Y < 0 || newHead.Y >= g.gridRows {
 		g.gameOver = true
 		log.Debug("bounds collision", "head", newHead)
 		return
