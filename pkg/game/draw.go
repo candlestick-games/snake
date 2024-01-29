@@ -8,6 +8,7 @@ import (
 
 	"github.com/candlestick-games/snake/assets"
 	"github.com/candlestick-games/snake/pkg/std/debugger"
+	"github.com/candlestick-games/snake/pkg/std/pencil"
 	"github.com/candlestick-games/snake/pkg/std/space"
 )
 
@@ -173,16 +174,16 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		screen.DrawImage(img, op)
 	}
 
-	// Move direction
-	// moveTo := g.snake[0].ToF().Add(g.dir.ToF())
-	// pad := cellSize.Scale(0.6)
-	// pencil.StrokeRectV(
-	// 	screen,
-	// 	moveTo.Mul(cellSize).Add(cellOffset).Add(pad.Scale(0.5)),
-	// 	cellSize.Sub(pad),
-	// 	2,
-	// 	colornames.Aliceblue,
-	// )
+	if g.gameOver {
+		moveTo := g.snake[0].ToF().Add(g.dir.ToF())
+		pencil.StrokeRectV(
+			screen,
+			moveTo.Mul(cellSize).Add(cellOffset),
+			cellSize,
+			2,
+			colornames.Red,
+		)
+	}
 
 	debugger.Draw(screen)
 }

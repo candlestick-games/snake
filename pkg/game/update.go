@@ -62,7 +62,6 @@ func (g *Game) moveSnake() {
 
 	head := g.snake[0]
 	newHead := head.Add(g.dir)
-	g.prevDir = g.dir
 
 	if newHead.X < 0 || newHead.X >= cellCols || newHead.Y < 0 || newHead.Y >= cellRows {
 		g.gameOver = true
@@ -85,6 +84,8 @@ func (g *Game) moveSnake() {
 		log.Debug("self collision", "head", newHead)
 		return
 	}
+
+	g.prevDir = g.dir
 
 	tail := g.snake[len(g.snake)-1]
 	copy(g.snake[1:], g.snake[:len(g.snake)-1])
