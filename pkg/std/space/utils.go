@@ -37,3 +37,19 @@ func ImageSize(img *ebiten.Image) Vec2I {
 		Y: bounds.Max.Y,
 	}
 }
+
+func Sign(n int) int {
+	if n == 0 {
+		return 0
+	} else if n < 0 {
+		return -1
+	}
+	return 1
+}
+
+func Abs(n int) int {
+	if n < 0 {
+		return -n
+	}
+	return n
+}

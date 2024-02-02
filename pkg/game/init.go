@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/candlestick-games/snake/pkg/std/collection"
-	"github.com/candlestick-games/snake/pkg/std/rand"
 	"github.com/candlestick-games/snake/pkg/std/space"
 )
 
@@ -41,28 +40,6 @@ func (g *Game) resetSnake() {
 	g.gameOver = false
 }
 
-func (g *Game) placeWalls() {
-	g.walls = make([][]bool, g.gridRows)
-	for y := 0; y < g.gridRows; y++ {
-		g.walls[y] = make([]bool, g.gridCols)
-	}
-
-	n := rand.Int((g.gridCols*g.gridRows)/20+1, (g.gridCols*g.gridRows)/10+1)
-	for i := 0; i < n; i++ {
-		w := space.NewVec2I(-1)
-		for w.X < 0 || g.walls[w.Y][w.X] {
-			w = space.RandomVec2I(0, g.gridCols-1, 0, g.gridRows-1)
-		}
-
-		g.walls[w.Y][w.X] = true
-		m := rand.Int(0, 8)
-		for j := 0; j < m; j++ {
-			rw := g.randomWallNeighbour(w)
-			g.walls[rw.Y][rw.X] = true
-		}
-	}
-}
-
 func (g *Game) randomWallNeighbour(w space.Vec2I) space.Vec2I {
 	nw := space.NewVec2I(-1)
 	for nw.X < 0 || nw == w {
@@ -73,7 +50,7 @@ func (g *Game) randomWallNeighbour(w space.Vec2I) space.Vec2I {
 
 func (g *Game) placeFood() {
 	for {
-		pos := space.RandomVec2I(1, g.gridCols-1, 1, g.gridRows-1)
+		pos := space.RandomVec2I(0, g.gridCols-1, 0, g.gridRows-1)
 
 		if g.food.Has(pos) {
 			continue

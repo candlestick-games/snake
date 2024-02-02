@@ -68,3 +68,10 @@ func (v Vec2I) Shrink(s int) Vec2I {
 		Y: v.Y / s,
 	}
 }
+
+func (v Vec2I) Abs() Vec2I {
+	return Vec2I{
+		X: Abs(v.X),
+		Y: Abs(v.Y),
+	}
+}
