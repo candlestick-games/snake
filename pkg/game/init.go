@@ -35,11 +35,13 @@ func (g *Game) resetSnake() {
 }
 
 func (g *Game) placeSnake() {
+	g.snake = make([]space.Vec2I, 0, 3)
+
 	snakeHead := space.NewVec2I(-1)
 	for snakeHead.X < 0 || g.isOccupied(snakeHead) {
 		snakeHead = space.RandomVec2I(0, g.gridCols, 0, g.gridRows)
 	}
-	g.snake = []space.Vec2I{snakeHead}
+	g.snake = append(g.snake, snakeHead)
 
 	snakeBody := space.NewVec2I(-1)
 	for snakeBody.X < 0 || g.isSnake(snakeBody) {
@@ -55,6 +57,10 @@ func (g *Game) placeSnake() {
 
 	g.dir = snakeHead.Sub(snakeBody)
 	g.prevDir = g.dir
+
+	if g.isOccupied(snakeHead.Add(g.dir)) {
+		g.placeSnake()
+	}
 }
 
 func (g *Game) placeFood() {
