@@ -20,6 +20,13 @@ func NewVec2I(points ...int) Vec2I {
 	}
 }
 
+func (v Vec2I) Copy() Vec2I {
+	return Vec2I{
+		X: v.X,
+		Y: v.Y,
+	}
+}
+
 func (v Vec2I) ToF() Vec2F {
 	return Vec2F{
 		X: float64(v.X),

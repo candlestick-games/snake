@@ -26,13 +26,7 @@ func (g *Game) resetSnake() {
 
 	g.placeWalls()
 
-	g.snake = []space.Vec2I{
-		{X: 3, Y: 1},
-		{X: 2, Y: 1},
-		{X: 1, Y: 1},
-	}
-	g.dir = space.Vec2I{X: 1, Y: 0}
-	g.prevDir = g.dir
+	g.placeSnake()
 
 	g.food = collection.NewSet[space.Vec2I]()
 	g.placeFood()
@@ -40,12 +34,27 @@ func (g *Game) resetSnake() {
 	g.gameOver = false
 }
 
-func (g *Game) randomWallNeighbour(w space.Vec2I) space.Vec2I {
-	nw := space.NewVec2I(-1)
-	for nw.X < 0 || nw == w {
-		nw = space.RandomVec2I(max(w.X-1, 0), min(w.X+1, g.gridCols-1), max(w.Y-1, 0), min(w.Y+1, g.gridRows-1))
+func (g *Game) placeSnake() {
+	snakeHead := space.NewVec2I(-1)
+	for snakeHead.X < 0 || g.isOccupied(snakeHead) {
+		snakeHead = space.RandomVec2I(0, g.gridCols, 0, g.gridRows)
 	}
-	return nw
+	g.snake = []space.Vec2I{snakeHead}
+
+	snakeBody := space.NewVec2I(-1)
+	for snakeBody.X < 0 || g.isSnake(snakeBody) {
+		snakeBody = g.randomUnoccupiedNeighbour(snakeHead)
+	}
+	g.snake = append(g.snake, snakeBody)
+
+	snakeTail := space.NewVec2I(-1)
+	for snakeTail.X < 0 || g.isSnake(snakeTail) {
+		snakeTail = g.randomUnoccupiedNeighbour(snakeBody)
+	}
+	g.snake = append(g.snake, snakeTail)
+
+	g.dir = snakeHead.Sub(snakeBody)
+	g.prevDir = g.dir
 }
 
 func (g *Game) placeFood() {

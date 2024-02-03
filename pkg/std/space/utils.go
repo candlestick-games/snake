@@ -13,6 +13,21 @@ func RandomVec2I(minX, maxX, minY, maxY int) Vec2I {
 	}
 }
 
+func RandomVec2IDir() Vec2I {
+	switch rand.Int(0, 3) {
+	case 0:
+		return Vec2I{X: 1}
+	case 1:
+		return Vec2I{X: -1}
+	case 2:
+		return Vec2I{Y: 1}
+	case 3:
+		return Vec2I{Y: -1}
+	default:
+		panic("unreachable")
+	}
+}
+
 func RandomVec2F(minX, maxX, minY, maxY float64) Vec2F {
 	return Vec2F{
 		X: rand.Float(minX, maxX),
