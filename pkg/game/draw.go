@@ -213,7 +213,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		pencil.TextCentered(
 			screen,
 			assets.FontFace(assets.RegularText),
-			fmt.Sprintf("Start in %ds", tick.SecondsCeil(g.startTime.TimeLeft())),
+			fmt.Sprintf("Start in %d", tick.SecondsCeil(g.startTime.TimeLeft())),
 			g.screenWidth/2,
 			g.screenHeight/2,
 			colornames.White,

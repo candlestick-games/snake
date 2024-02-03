@@ -26,6 +26,10 @@ func (g *Game) Update() error {
 		}
 	}
 
+	if inpututil.IsKeyJustPressed(ebiten.KeyF11) {
+		ebiten.SetFullscreen(!ebiten.IsFullscreen())
+	}
+
 	if g.gameOver {
 		if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
 			g.resetSnake()
