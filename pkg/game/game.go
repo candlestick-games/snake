@@ -3,6 +3,7 @@ package game
 import (
 	"github.com/candlestick-games/snake/pkg/std/collection"
 	"github.com/candlestick-games/snake/pkg/std/space"
+	"github.com/candlestick-games/snake/pkg/std/tick"
 )
 
 type Game struct {
@@ -10,12 +11,13 @@ type Game struct {
 	boardOffset space.Vec2F
 	cellSize    float64
 
-	ticks uint
+	ticker *tick.Ticker
 
-	snake    []space.Vec2I
-	dir      space.Vec2I
-	prevDir  space.Vec2I
-	gameOver bool
+	snake     []space.Vec2I
+	dir       space.Vec2I
+	prevDir   space.Vec2I
+	startTime *tick.Timer
+	gameOver  bool
 
 	gridCols int
 	gridRows int

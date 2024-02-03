@@ -6,6 +6,7 @@ import (
 
 	"github.com/candlestick-games/snake/pkg/std/collection"
 	"github.com/candlestick-games/snake/pkg/std/space"
+	"github.com/candlestick-games/snake/pkg/std/tick"
 )
 
 func (g *Game) Init() error {
@@ -14,6 +15,8 @@ func (g *Game) Init() error {
 	ebiten.SetFullscreen(!viper.GetBool("window"))
 	ebiten.SetWindowClosingHandled(true)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
+
+	g.ticker = tick.NewTicker()
 
 	g.resetSnake()
 
@@ -32,6 +35,7 @@ func (g *Game) resetSnake() {
 	g.placeFood()
 
 	g.gameOver = false
+	g.startTime = g.ticker.StartTimer(60 * 3)
 }
 
 func (g *Game) placeSnake() {

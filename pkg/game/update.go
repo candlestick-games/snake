@@ -11,6 +11,7 @@ import (
 
 func (g *Game) Update() error {
 	debugger.Update()
+	g.ticker.Update()
 
 	// Quit handler
 	{
@@ -24,9 +25,6 @@ func (g *Game) Update() error {
 			return ebiten.Termination
 		}
 	}
-
-	// Game ticks
-	g.ticks++
 
 	if g.gameOver {
 		if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
@@ -56,7 +54,10 @@ func (g *Game) handleControls() {
 }
 
 func (g *Game) moveSnake() {
-	if g.ticks%20 != 0 {
+	if !g.ticker.Every(20) {
+		return
+	}
+	if g.startTime.IsStarted() && !g.startTime.Wait() {
 		return
 	}
 
@@ -65,13 +66,13 @@ func (g *Game) moveSnake() {
 
 	if newHead.X < 0 || newHead.X >= g.gridCols || newHead.Y < 0 || newHead.Y >= g.gridRows {
 		g.gameOver = true
-		log.Debug("bounds collision", "head", newHead)
+		log.Debug("Bounds collision", "head", newHead)
 		return
 	}
 
 	if g.walls[newHead.Y][newHead.X] {
 		g.gameOver = true
-		log.Debug("wall collision", "head", newHead)
+		log.Debug("Wall collision", "head", newHead)
 		return
 	}
 
@@ -81,7 +82,7 @@ func (g *Game) moveSnake() {
 		}
 
 		g.gameOver = true
-		log.Debug("self collision", "head", newHead)
+		log.Debug("Self collision", "head", newHead)
 		return
 	}
 
