@@ -1,8 +1,6 @@
 package game
 
 import (
-	"slices"
-
 	"github.com/candlestick-games/snake/pkg/std/rand"
 	"github.com/candlestick-games/snake/pkg/std/space"
 )
@@ -128,41 +126,29 @@ func (g *Game) placeWalls() {
 	}
 
 	// Carve corridors
-	// TODO: Fix that not all rooms connected
-	connected := make([]bool, len(rooms))
-	for k, fromRoom := range rooms {
-		connected[k] = true
-		if !slices.Contains(connected, false) {
-			break
-		}
+	// TODO: Fix that not all rooms connected (may be fixed by TODOs above)
+	for _, fromRoom := range rooms {
+		for _, toRoom := range rooms {
+			p1 := fromRoom.Center()
+			p2 := toRoom.Center()
 
-		ix := -1
-		for ix < 0 || connected[ix] {
-			ix = rand.Int(0, len(rooms)-1)
-		}
-		connected[ix] = true
+			for p1 != p2 {
+				g.walls[p1.Y][p1.X] = false
 
-		toRoom := rooms[ix]
+				dir := p2.Sub(p1)
+				a := dir.Abs()
+				if a.X != 0 {
+					dir.X = space.Sign(dir.X)
+					dir.Y = 0
+				} else {
+					dir.X = 0
+					dir.Y = space.Sign(dir.Y)
+				}
 
-		p1 := fromRoom.Center()
-		p2 := toRoom.Center()
-
-		for p1 != p2 {
-			g.walls[p1.Y][p1.X] = false
-
-			dir := p2.Sub(p1)
-			a := dir.Abs()
-			if a.X != 0 {
-				dir.X = space.Sign(dir.X)
-				dir.Y = 0
-			} else {
-				dir.X = 0
-				dir.Y = space.Sign(dir.Y)
+				p1 = p1.Add(dir)
 			}
-
-			p1 = p1.Add(dir)
+			g.walls[p2.Y][p2.X] = false
 		}
-		g.walls[p2.Y][p2.X] = false
 	}
 
 	// Remove dead ends (1 entrance cells)
