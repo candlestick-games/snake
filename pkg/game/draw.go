@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -10,6 +11,7 @@ import (
 	"github.com/candlestick-games/snake/pkg/std/debugger"
 	"github.com/candlestick-games/snake/pkg/std/pencil"
 	"github.com/candlestick-games/snake/pkg/std/space"
+	"github.com/candlestick-games/snake/pkg/std/tick"
 )
 
 func (g *Game) Draw(screen *ebiten.Image) {
@@ -182,6 +184,35 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			cellSize,
 			2,
 			colornames.Red,
+		)
+
+		pencil.TextCentered(
+			screen,
+			assets.FontFace(assets.BigText),
+			"Game Over",
+			g.screenWidth/2,
+			g.screenHeight/2,
+			colornames.Red,
+		)
+
+		pencil.TextCentered(
+			screen,
+			assets.FontFace(assets.RegularText),
+			"Press Enter to restart",
+			g.screenWidth/2,
+			g.screenHeight/2+64,
+			colornames.White,
+		)
+	}
+
+	if g.startTime.IsStarted() {
+		pencil.TextCentered(
+			screen,
+			assets.FontFace(assets.RegularText),
+			fmt.Sprintf("Start in %ds", tick.SecondsCeil(g.startTime.TimeLeft())),
+			g.screenWidth/2,
+			g.screenHeight/2,
+			colornames.White,
 		)
 	}
 

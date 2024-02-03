@@ -12,6 +12,13 @@ func (t *Timer) IsStarted() bool {
 	return t != nil && !t.stopped
 }
 
+func (t *Timer) TimeLeft() uint {
+	if t == nil || t.stopped || t.ticker.ticks > t.start+t.duration {
+		return 0
+	}
+	return t.start + t.duration - t.ticker.ticks
+}
+
 func (t *Timer) Reset(duration uint) {
 	t.start = t.ticker.ticks
 	t.duration = duration
