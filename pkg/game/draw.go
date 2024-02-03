@@ -2,6 +2,7 @@ package game
 
 import (
 	"fmt"
+	"image/color"
 	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -15,9 +16,12 @@ import (
 )
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	screen.Fill(colornames.Gray)
-	board := screen.SubImage(g.boardBounds.ToIR()).(*ebiten.Image)
-	board.Clear()
+	screen.Fill(color.RGBA{
+		R: 51,
+		G: 57,
+		B: 65,
+		A: 255,
+	})
 
 	// Cells
 	cellSize := space.NewVec2F(g.cellSize)
