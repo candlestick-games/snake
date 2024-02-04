@@ -42,8 +42,8 @@ func (t *Ticker) StartTimer(duration uint) *Timer {
 	}
 }
 
-func (t *Ticker) Wait(ticks uint) bool {
-	pos := call.GetPos()
+func (t *Ticker) Wait(ticks uint, ids ...uintptr) bool {
+	pos := call.GetPos(ids...)
 
 	start, ok := t.waiters[pos]
 	if !ok {

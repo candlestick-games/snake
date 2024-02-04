@@ -45,9 +45,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 
 	// Walls
-	for y := 0; y < g.gridRows; y++ {
-		for x := 0; x < g.gridCols; x++ {
-			if !g.walls[y][x] {
+	for y := -1; y <= g.gridRows; y++ {
+		for x := -1; x <= g.gridCols; x++ {
+			pos := space.NewVec2I(x, y)
+			if !g.isOccupied(pos) {
 				continue
 			}
 
@@ -55,8 +56,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 			op := &ebiten.DrawImageOptions{}
 			op.GeoM = space.ImgResizeTo(op.GeoM, img, cellSize)
-
-			pos := space.NewVec2I(x, y)
 			op.GeoM = space.Translate(op.GeoM, pos.ToF().Mul(cellSize).Add(cellOffset))
 
 			screen.DrawImage(img, op)
