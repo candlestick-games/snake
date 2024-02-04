@@ -1,6 +1,8 @@
 package game
 
 import (
+	"github.com/charmbracelet/log"
+
 	"github.com/candlestick-games/snake/pkg/std/rand"
 	"github.com/candlestick-games/snake/pkg/std/space"
 )
@@ -18,8 +20,6 @@ func (g *Game) placeWalls() {
 	// Carve rooms
 	const numberOfRoom = 8
 	const maxIterations = 100
-
-	grid := space.NewRectI(0, 0, g.gridCols, g.gridRows)
 
 	i := 0
 	var rooms []space.RectI
@@ -39,12 +39,15 @@ func (g *Game) placeWalls() {
 			Pos:  pos,
 			Size: size,
 		}
-		// TODO: Check if room is fully inside grid
+		if !room.Inside(g.gridBounds) {
+			log.Error("Room out of bounds", "room", room, "grid", g.gridBounds)
+			continue
+		}
 
 		roomBound := room.
 			Move(space.NewVec2I(-1)).
 			Grow(space.NewVec2I(2)).
-			Clamp(grid)
+			Clamp(g.gridBounds)
 
 		intercepted := false
 		for _, placedRoom := range rooms {
@@ -84,7 +87,7 @@ func (g *Game) placeWalls() {
 		}
 
 		// TODO: Check if cluster is fully inside room instead
-		if cluster.Clamp(grid) != cluster {
+		if cluster.Clamp(g.gridBounds) != cluster {
 			continue
 		}
 
@@ -114,7 +117,7 @@ func (g *Game) placeWalls() {
 		}
 
 		// TODO: Check if cluster is fully inside room instead
-		if cluster.Clamp(grid) != cluster {
+		if cluster.Clamp(g.gridBounds) != cluster {
 			continue
 		}
 

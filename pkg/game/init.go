@@ -28,11 +28,8 @@ func (g *Game) resetSnake() {
 	g.gridCols = 16 * 2
 	g.gridRows = 9 * 2
 	g.gridBounds = space.RectI{
-		Pos: space.Vec2I{},
-		Size: space.Vec2I{
-			X: g.gridCols,
-			Y: g.gridRows,
-		},
+		Pos:  space.Vec2I{X: 0, Y: 0},
+		Size: space.Vec2I{X: g.gridCols, Y: g.gridRows},
 	}
 
 	g.placeWalls()

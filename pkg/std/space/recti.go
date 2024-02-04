@@ -29,6 +29,10 @@ func (r RectI) Contains(pos Vec2I) bool {
 		pos.Y >= r.Pos.Y && pos.Y < r.Pos.Y+r.Size.Y
 }
 
+func (r RectI) Inside(o RectI) bool {
+	return o.Contains(r.Pos) && o.Contains(r.Pos.Add(r.Size.Add(NewVec2I(-1))))
+}
+
 func (r RectI) Intercepts(o RectI) bool {
 	return (r.Pos.X <= o.Pos.X+o.Size.X && r.Pos.X+r.Size.X >= o.Pos.X) &&
 		(r.Pos.Y <= o.Pos.Y+o.Size.Y && r.Pos.Y+r.Size.Y >= o.Pos.Y)
