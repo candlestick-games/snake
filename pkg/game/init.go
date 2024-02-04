@@ -32,6 +32,8 @@ func (g *Game) resetSnake() {
 		Size: space.Vec2I{X: g.gridCols, Y: g.gridRows},
 	}
 
+	// TODO: Fix infinite loop
+
 	g.placeWalls()
 	g.placeSnake()
 	g.food = collection.NewSet[space.Vec2I]()
@@ -75,8 +77,8 @@ func (g *Game) placeFood() {
 	i := 0
 	for {
 		i++
-		if i > 10e5 {
-			log.Fatal("Infinite loop")
+		if i > 10e4 {
+			log.Fatal("Max iterations reached")
 		}
 
 		pos := space.RandomVec2I(0, g.gridCols-1, 0, g.gridRows-1)
