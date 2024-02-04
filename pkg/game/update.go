@@ -13,12 +13,9 @@ func (g *Game) Update() error {
 	debugger.Update()
 	g.ticker.Update()
 
-	// Quit handler
+	// Quit
 	{
 		if ebiten.IsWindowBeingClosed() {
-			g.quit = true
-		}
-		if inpututil.IsKeyJustPressed(ebiten.KeyEscape) {
 			g.quit = true
 		}
 		if g.quit {
@@ -26,14 +23,24 @@ func (g *Game) Update() error {
 		}
 	}
 
+	// Fullscreen
 	if inpututil.IsKeyJustPressed(ebiten.KeyF11) {
 		ebiten.SetFullscreen(!ebiten.IsFullscreen())
 	}
 
+	// Game over
 	if g.gameOver {
 		if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
 			g.resetSnake()
 		}
+		return nil
+	}
+
+	// Pause game
+	if !g.startTime.IsStarted() && inpututil.IsKeyJustPressed(ebiten.KeyEscape) {
+		g.pause = !g.pause
+	}
+	if g.pause {
 		return nil
 	}
 

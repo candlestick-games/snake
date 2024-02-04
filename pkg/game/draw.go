@@ -48,7 +48,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	for y := -1; y <= g.gridRows; y++ {
 		for x := -1; x <= g.gridCols; x++ {
 			pos := space.NewVec2I(x, y)
-			if !g.isOccupied(pos) {
+			if !g.isWall(pos) {
 				continue
 			}
 
@@ -215,6 +215,26 @@ func (g *Game) Draw(screen *ebiten.Image) {
 			fmt.Sprintf("Start in %d", tick.SecondsCeil(g.startTime.TimeLeft())),
 			g.screenWidth/2,
 			g.screenHeight/2,
+			colornames.White,
+		)
+	}
+
+	if g.pause {
+		pencil.TextCentered(
+			screen,
+			assets.FontFace(assets.BigText),
+			"Pause",
+			g.screenWidth/2,
+			g.screenHeight/2,
+			colornames.Orange,
+		)
+
+		pencil.TextCentered(
+			screen,
+			assets.FontFace(assets.RegularText),
+			"Press Esc to resume",
+			g.screenWidth/2,
+			g.screenHeight/2+64,
 			colornames.White,
 		)
 	}

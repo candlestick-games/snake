@@ -30,8 +30,8 @@ func (g *Game) placeWalls() {
 		i++
 
 		size := space.Vec2I{
-			X: rand.IntWithSkew(2, g.gridCols-1, 0.5),
-			Y: rand.IntWithSkew(2, g.gridRows-1, 0.4),
+			X: rand.IntWithSkew(2, g.gridCols, 0.5),
+			Y: rand.IntWithSkew(2, g.gridRows, 0.4),
 		}
 		pos := space.RandomVec2I(0, g.gridCols-size.X, 0, g.gridRows-size.Y)
 

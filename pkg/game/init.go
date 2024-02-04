@@ -1,6 +1,7 @@
 package game
 
 import (
+	"github.com/charmbracelet/log"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/spf13/viper"
 
@@ -26,14 +27,20 @@ func (g *Game) Init() error {
 func (g *Game) resetSnake() {
 	g.gridCols = 16 * 2
 	g.gridRows = 9 * 2
+	g.gridBounds = space.RectI{
+		Pos: space.Vec2I{},
+		Size: space.Vec2I{
+			X: g.gridCols,
+			Y: g.gridRows,
+		},
+	}
 
 	g.placeWalls()
-
 	g.placeSnake()
-
 	g.food = collection.NewSet[space.Vec2I]()
 	g.placeFood()
 
+	g.pause = false
 	g.gameOver = false
 	g.startTime = g.ticker.StartTimer(60 * 3)
 }
@@ -42,7 +49,7 @@ func (g *Game) placeSnake() {
 	g.snake = make([]space.Vec2I, 0, 3)
 
 	snakeHead := space.NewVec2I(-1)
-	for snakeHead.X < 0 || g.isOccupied(snakeHead) {
+	for snakeHead.X < 0 || g.isWall(snakeHead) {
 		snakeHead = space.RandomVec2I(0, g.gridCols, 0, g.gridRows)
 	}
 	g.snake = append(g.snake, snakeHead)
@@ -62,31 +69,30 @@ func (g *Game) placeSnake() {
 	g.dir = snakeHead.Sub(snakeBody)
 	g.prevDir = g.dir
 
-	if g.isOccupied(snakeHead.Add(g.dir)) {
+	if g.isWall(snakeHead.Add(g.dir)) {
 		g.placeSnake()
 	}
 }
 
 func (g *Game) placeFood() {
+	i := 0
 	for {
+		i++
+		if i > 10e5 {
+			log.Fatal("Infinite loop")
+		}
+
 		pos := space.RandomVec2I(0, g.gridCols-1, 0, g.gridRows-1)
 
 		if g.food.Has(pos) {
 			continue
 		}
 
-		if g.walls[pos.Y][pos.X] {
+		if g.isWall(pos) {
 			continue
 		}
 
-		var ok bool
-		for _, snake := range g.snake {
-			if snake == pos {
-				ok = true
-				break
-			}
-		}
-		if ok {
+		if g.isSnake(pos) {
 			continue
 		}
 
