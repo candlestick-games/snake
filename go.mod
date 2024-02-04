@@ -5,11 +5,11 @@ go 1.21.6
 require (
 	github.com/charmbracelet/lipgloss v0.9.1
 	github.com/charmbracelet/log v0.3.1
-	github.com/hajimehoshi/ebiten/v2 v2.6.4
+	github.com/hajimehoshi/ebiten/v2 v2.6.5
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2
 	go.uber.org/atomic v1.11.0
-	golang.org/x/image v0.12.0
+	golang.org/x/image v0.15.0
 )
 
 require (
