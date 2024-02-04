@@ -62,7 +62,7 @@ func (g *Game) isSnake(pos space.Vec2I) bool {
 	return false
 }
 
-func (g *Game) randomUnoccupiedNeighbour(pos space.Vec2I) space.Vec2I {
+func (g *Game) randomUnoccupiedNeighbour(pos space.Vec2I) space.Vec2I { // TODO: This may fail
 	nw := space.NewVec2I(-1)
 	for nw.X < 0 || g.isWall(nw) {
 		nw = pos.Add(space.RandomVec2IDir())

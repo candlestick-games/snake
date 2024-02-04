@@ -46,3 +46,13 @@ func Bool(probability float64) bool {
 	}
 	return rand.Float64() < probability
 }
+
+func Shuffle[T any](s []T) {
+	if len(s) < 2 {
+		return
+	}
+	for i := 0; i < len(s); i++ {
+		j := rand.Intn(len(s) - i)
+		s[i], s[j] = s[j], s[i]
+	}
+}

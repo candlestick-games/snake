@@ -190,8 +190,45 @@ func (g *Game) placeWalls() {
 		return
 	}
 
-	// Remove dead ends (group of cells with only 1 entrance)
-	// TODO: Implement
+	// Remove simple dead ends
+	for y := 0; y < g.gridRows; y++ {
+		for x := 0; x < g.gridCols; x++ {
+			if g.walls[y][x] {
+				continue
+			}
+
+			pos := space.NewVec2I(x, y)
+			if g.countEntrances(pos) != 1 {
+				continue
+			}
+			log.Debug("Has a dead end")
+
+			dirs := []space.Vec2I{{X: 1}, {X: -1}, {Y: 1}, {Y: -1}}
+			rand.Shuffle(dirs)
+
+			removed := false
+			for _, dir := range dirs {
+				w := pos.Add(dir)
+				if !g.gridBounds.Contains(w) || !g.walls[w.Y][w.X] {
+					continue
+				}
+
+				if g.countEntrances(w) >= 2 {
+					g.walls[w.Y][w.X] = false
+					removed = true
+					break
+				}
+			}
+			if !removed {
+				log.Debug("Failed to remove a dead end")
+				g.placeWalls()
+				return
+			}
+		}
+	}
+
+	// Remove complex dead ends
+	// TODO: Implement if whole area has only one entrance
 }
 
 func (g *Game) floodFill(start space.Vec2I, connected [][]bool) {
@@ -207,4 +244,21 @@ func (g *Game) floodFill(start space.Vec2I, connected [][]bool) {
 	g.floodFill(start.Add(space.NewVec2I(-1, 0)), connected)
 	g.floodFill(start.Add(space.NewVec2I(0, 1)), connected)
 	g.floodFill(start.Add(space.NewVec2I(0, -1)), connected)
+}
+
+func (g *Game) countEntrances(pos space.Vec2I) int {
+	entrances := 0
+	if !g.isWall(pos.Add(space.NewVec2I(1, 0))) {
+		entrances++
+	}
+	if !g.isWall(pos.Add(space.NewVec2I(-1, 0))) {
+		entrances++
+	}
+	if !g.isWall(pos.Add(space.NewVec2I(0, 1))) {
+		entrances++
+	}
+	if !g.isWall(pos.Add(space.NewVec2I(0, -1))) {
+		entrances++
+	}
+	return entrances
 }
