@@ -25,6 +25,8 @@ func (g *Game) Init() error {
 }
 
 func (g *Game) resetSnake() {
+	log.Debug("Resetting snake...")
+
 	g.gridCols = 16 * 2
 	g.gridRows = 9 * 2
 	g.gridBounds = space.RectI{
@@ -32,16 +34,22 @@ func (g *Game) resetSnake() {
 		Size: space.Vec2I{X: g.gridCols, Y: g.gridRows},
 	}
 
-	// TODO: Fix infinite loop
-
+	log.Debug("Placing walls...")
 	g.placeWalls()
+
+	log.Debug("Placing snake...")
+	// TODO: Fix infinite loop (probably caused by dead end)
 	g.placeSnake()
+
+	log.Debug("Placing food...")
 	g.food = collection.NewSet[space.Vec2I]()
 	g.placeFood()
 
 	g.pause = false
 	g.gameOver = false
 	g.startTime = g.ticker.StartTimer(60 * 3)
+
+	log.Debug("Snake reset completed")
 }
 
 func (g *Game) placeSnake() {

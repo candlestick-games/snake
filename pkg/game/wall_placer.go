@@ -1,6 +1,8 @@
 package game
 
 import (
+	"slices"
+
 	"github.com/charmbracelet/log"
 
 	"github.com/candlestick-games/snake/pkg/std/rand"
@@ -19,12 +21,13 @@ func (g *Game) placeWalls() {
 
 	// Carve rooms
 	const numberOfRoom = 8
-	const maxIterations = 100
+	const maxIterations = 256
 
 	i := 0
 	var rooms []space.RectI
 	for len(rooms) != numberOfRoom {
 		if i > maxIterations {
+			log.Debug("Max iterations reached")
 			break
 		}
 		i++
@@ -40,7 +43,7 @@ func (g *Game) placeWalls() {
 			Size: size,
 		}
 		if !room.Inside(g.gridBounds) {
-			log.Error("Room out of bounds", "room", room, "grid", g.gridBounds)
+			log.Debug("Room out of bounds", "room", room, "grid", g.gridBounds)
 			continue
 		}
 
@@ -90,7 +93,7 @@ func (g *Game) placeWalls() {
 		}
 
 		if !cluster.Inside(room) {
-			log.Error("Cluster out of bounds", "cluster", cluster, "room", room)
+			log.Debug("Cluster out of bounds", "cluster", cluster, "room", room)
 			continue
 		}
 
@@ -122,7 +125,7 @@ func (g *Game) placeWalls() {
 		}
 
 		if !cluster.Inside(roomOutside) || !cluster.Inside(g.gridBounds) {
-			log.Error("Cluster out of bounds", "cluster", cluster, "room-outside", roomOutside,
+			log.Debug("Cluster out of bounds", "cluster", cluster, "room-outside", roomOutside,
 				"grid", g.gridBounds)
 			continue
 		}
@@ -160,25 +163,48 @@ func (g *Game) placeWalls() {
 	}
 
 	// Validate that there are empty cells & all cells connected
-	// TODO: Implement
-	hasEmpty := false
+	floodFillStart := space.NewVec2I(-1)
 	connected := make([][]bool, g.gridRows)
 	for y := 0; y < g.gridRows; y++ {
 		connected[y] = make([]bool, g.gridCols)
 		for x := 0; x < g.gridCols; x++ {
-			connected[y][x] = false
-			if !hasEmpty && !g.walls[y][x] {
-				hasEmpty = true
-				connected[y][x] = true
+			connected[y][x] = g.walls[y][x]
+			if floodFillStart.X < 0 && !g.walls[y][x] {
+				floodFillStart = space.NewVec2I(x, y)
 			}
 		}
 	}
-	if !hasEmpty {
-		log.Error("No empty cells generated")
+	if floodFillStart.X < 0 {
+		log.Debug("No empty cells generated")
+		g.placeWalls()
+		return
+	}
+
+	g.floodFill(floodFillStart, connected)
+	fullyConnected := slices.ContainsFunc(connected, func(cols []bool) bool {
+		return slices.Contains(cols, false)
+	})
+	if fullyConnected {
+		log.Debug("Not fully connected")
 		g.placeWalls()
 		return
 	}
 
 	// Remove dead ends (group of cells with only 1 entrance)
 	// TODO: Implement
+}
+
+func (g *Game) floodFill(start space.Vec2I, connected [][]bool) {
+	if start.X < 0 || start.X >= g.gridCols ||
+		start.Y < 0 || start.Y >= g.gridRows ||
+		connected[start.Y][start.X] {
+		return
+	}
+
+	connected[start.Y][start.X] = true
+
+	g.floodFill(start.Add(space.NewVec2I(1, 0)), connected)
+	g.floodFill(start.Add(space.NewVec2I(-1, 0)), connected)
+	g.floodFill(start.Add(space.NewVec2I(0, 1)), connected)
+	g.floodFill(start.Add(space.NewVec2I(0, -1)), connected)
 }
